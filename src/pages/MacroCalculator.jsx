@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { Calculator, ChevronDown, Info, Target, Zap, FlaskConical } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Calculator, FlaskConical, Save } from 'lucide-react'
+
+const STORAGE_KEY = 'ironlegacy_macros'
 
 const activityLevels = [
   { id: 'sedentary', label: 'Sedentary', desc: 'Desk job, little/no exercise', multiplier: 1.2 },
@@ -114,18 +116,28 @@ const coachNutritionTips = {
 }
 
 export default function MacroCalculator() {
-  const [unit, setUnit] = useState('imperial')
-  const [weight, setWeight] = useState('')
-  const [height, setHeight] = useState('')
-  const [age, setAge] = useState('')
-  const [gender, setGender] = useState('male')
-  const [activityLevel, setActivityLevel] = useState('moderate')
-  const [goal, setGoal] = useState('leanBulk')
-  const [results, setResults] = useState(null)
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {} } catch { return {} } })()
+
+  const [unit, setUnit] = useState(saved.unit || 'imperial')
+  const [weight, setWeight] = useState(saved.weight || '')
+  const [height, setHeight] = useState(saved.height || '')
+  const [age, setAge] = useState(saved.age || '')
+  const [gender, setGender] = useState(saved.gender || 'male')
+  const [activityLevel, setActivityLevel] = useState(saved.activityLevel || 'moderate')
+  const [goal, setGoal] = useState(saved.goal || 'leanBulk')
+  const [results, setResults] = useState(saved.results || null)
   const [error, setError] = useState('')
+  const [saved_, setSaved_] = useState(false)
 
   const weightLabel = unit === 'imperial' ? 'Weight (lbs)' : 'Weight (kg)'
   const heightLabel = unit === 'imperial' ? 'Height (inches)' : 'Height (cm)'
+
+  function saveToPhone(res) {
+    const data = { unit, weight, height, age, gender, activityLevel, goal, results: res }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    setSaved_(true)
+    setTimeout(() => setSaved_(false), 2000)
+  }
 
   function handleCalculate() {
     setError('')
@@ -149,7 +161,9 @@ export default function MacroCalculator() {
     const weightLbs = unit === 'imperial' ? w : w * 2.205
     const macros = calculateMacros(targetCals, weightLbs, goal)
 
-    setResults({ bmr: Math.round(bmr), tdee, targetCals, macros, selectedGoal, activity })
+    const res = { bmr: Math.round(bmr), tdee, targetCals, macros, selectedGoal, activity }
+    setResults(res)
+    saveToPhone(res)
     window.scrollTo({ top: document.getElementById('results')?.offsetTop - 80, behavior: 'smooth' })
   }
 
@@ -309,8 +323,9 @@ export default function MacroCalculator() {
           className="btn-primary w-full text-lg flex items-center justify-center gap-2"
         >
           <Calculator size={20} />
-          Calculate My Macros
+          {saved_ ? '✓ Saved to Phone!' : 'Calculate & Save My Macros'}
         </button>
+        <p className="text-xs text-gray-600 text-center mt-2">Your stats are automatically saved on this device</p>
       </div>
 
       {/* Results */}
