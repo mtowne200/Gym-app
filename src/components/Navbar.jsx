@@ -1,27 +1,26 @@
-import { useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Dumbbell, Calculator, Users, BookOpen, Menu, X } from 'lucide-react'
+import { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { Search, PlusCircle, BookOpen, Menu, X, Tag } from 'lucide-react';
 
 const links = [
-  { to: '/coaches', label: 'Coaches', icon: Users },
-  { to: '/exercises', label: 'Exercises', icon: BookOpen },
-  { to: '/macros', label: 'Macros', icon: Calculator },
-]
+  { to: '/browse', label: 'Browse Finds', icon: Search },
+  { to: '/submit', label: 'Submit a Find', icon: PlusCircle },
+  { to: '/how-it-works', label: 'How It Works', icon: BookOpen },
+];
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false)
-  const location = useLocation()
+  const [open, setOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 bg-gray-950/95 backdrop-blur border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2 group" onClick={() => setOpen(false)}>
-            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center group-hover:bg-amber-400 transition-colors">
-              <Dumbbell size={18} className="text-gray-950" />
+            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center group-hover:bg-green-400 transition-colors shadow-lg shadow-green-500/20">
+              <Tag size={16} className="text-gray-950" />
             </div>
             <span className="font-black text-xl tracking-tight">
-              IRON <span className="text-amber-500">LEGACY</span>
+              PENNY <span className="text-green-400">FINDS</span>
             </span>
           </Link>
 
@@ -33,7 +32,7 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                     isActive
-                      ? 'bg-amber-500/10 text-amber-500'
+                      ? 'bg-green-500/10 text-green-400'
                       : 'text-gray-400 hover:text-white hover:bg-gray-800'
                   }`
                 }
@@ -63,7 +62,7 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                  isActive ? 'bg-amber-500/10 text-amber-500' : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                  isActive ? 'bg-green-500/10 text-green-400' : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`
               }
             >
@@ -74,5 +73,5 @@ export default function Navbar() {
         </div>
       )}
     </nav>
-  )
+  );
 }
